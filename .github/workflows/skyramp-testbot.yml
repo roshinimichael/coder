@@ -16,7 +16,7 @@ jobs:
     if: >-
       github.event_name == 'pull_request' ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '@skyramp-testbot') && github.event.comment.user.login != 'skyramp-testbot[bot]')
-    runs-on: 'ubuntu-latest'
+    runs-on: ${{ github.repository_owner == 'coder' && 'depot-ubuntu-22.04-8' || 'ubuntu-latest' }}
     permissions:
       contents: write
       pull-requests: write
@@ -40,5 +40,11 @@ jobs:
           skyrampLicenseFile: ${{ secrets.SKYRAMP_LICENSE_FILE }}
           anthropicApiKey: ${{ secrets.SKYRAMP_TESTBOT_API_KEY }}
           githubToken: ${{ steps.skyramp-testbot-app-token.outputs.token }}
-          sutSetupMode: docker_compose
+          sutSetupMode: 'none'
           sutSourceDockerComposeFile: compose.yaml
+          targetSetupCommand: CODER_ACCESS_URL=http://localhost:7080 docker compose -f compose.yaml up -d
+          targetReadyCheckCommand: curl -sf http://localhost:7080/healthz
+          targetReadyCheckTimeout: '300'
+          targetTeardownCommand: docker compose -f compose.yaml down -v
+          authTokenCommand: bash .skyramp/sut/get-auth-token.sh
+          uiCredentials: testadmin@coder.com:SkyRampT3stP@ss1
