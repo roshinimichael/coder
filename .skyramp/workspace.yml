@@ -1,0 +1,23 @@
+# Skyramp Workspace Configuration
+workspace:
+  repoName: roshinimichael/coder
+  repoUrl: https://github.com/roshinimichael/coder
+metadata:
+  schemaVersion: v1
+  mcpVersion: 0.2.8
+  executorVersion: v1.3.29
+  createdAt: "2026-06-29T18:55:34.836Z"
+  updatedAt: "2026-06-29T18:55:34.843Z"
+services:
+  - serviceName: coder-backend
+    language: typescript
+    framework: playwright
+    testDirectory: tests/skyramp
+    api:
+      schemaPath: coderd/apidoc/swagger.json
+      authType: apiKey
+      authHeader: Coder-Session-Token
+      baseUrl: http://localhost:3111
+    runtimeDetails:
+      serverStartCommand: ./scripts/develop.sh
+      runtime: local
